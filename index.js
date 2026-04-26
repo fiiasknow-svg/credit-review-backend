@@ -42,7 +42,7 @@ app.post("/api/leads", async (req, res) => {
       [name, email, phone, score, status, source, main_issue]
     );
 
-    res.json(result.rows[0]);
+    res.json({ ...result.rows[0], score: req.body.score || 50 });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "failed" });
