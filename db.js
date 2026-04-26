@@ -1,8 +1,25 @@
-const Database = require("better-sqlite3");
-const path = require("path");
-require("dotenv").config();
+const { Pool } = require("pg");
 
-const dbPath = process.env.DATABASE_URL || path.join(__dirname, "leads.db");
-const db = new Database(dbPath);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-module.exports = db;
+// Create table automatically
+pool.query(`
+  CREATE TABLE IF NOT EXISTS leads (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    email TEXT,
+    phone TEXT,
+    score INTEGER,
+    status TEXT,
+    source TEXT,
+    main_issue TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+module.exports = pool;
